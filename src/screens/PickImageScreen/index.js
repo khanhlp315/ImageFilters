@@ -41,7 +41,10 @@ export default class PickImageScreen extends Component
         this.didFocusSubscription = this.props.navigation.addListener(
             'didFocus',
             payload => {
-                this.mediaPicker.reloadCameraRoll();
+                if(this.mediaPicker._mounted)
+                {
+                    this.mediaPicker.reloadCameraRoll();
+                }
             }
         );
     }
@@ -59,7 +62,6 @@ export default class PickImageScreen extends Component
         {
             return (
                 <View style={styles.container}>
-                    {/*<Image  source={require('./resources/logo.png')}/>*/}
                     <Image  source={require('./resources/logo.png')} style={{height: 150, width: 150 }}/>
                     <MediaPicker
                         ref={ref => {

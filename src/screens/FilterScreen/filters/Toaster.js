@@ -1,23 +1,19 @@
-import {Node, Shaders} from 'gl-react'
+import GL from 'gl-react'
 import React from 'react'
 import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource'
 
-
-const shaders = Shaders.create({
-  Toaster: {
-    frag: `
+const shaders = GL.Shaders.create({
+    Toaster: {
+        frag: `
       precision highp float;
       varying vec2 uv;
-
       uniform sampler2D inputImageTexture;
       uniform sampler2D inputImageTexture2;
       uniform sampler2D inputImageTexture3;
       uniform sampler2D inputImageTexture4;
       uniform sampler2D inputImageTexture5;
       uniform sampler2D inputImageTexture6;
-
       void main () {
-
         lowp vec3 texel;
         mediump vec2 lookup;
         vec2 blue;
@@ -71,18 +67,24 @@ const shaders = Shaders.create({
         tmpvar_8.xyz = texel;
         gl_FragColor = tmpvar_8;
       }`
-  }
+    }
 });
 
-export class Toaster extends React.Component {
-    render() {
-        return <Node shader={shaders.Toaster}       uniforms={{
-            inputImageTexture:  this.props.inputImageTexture,
-            inputImageTexture2: resolveAssetSource(require('./resources/toasterMetal.png')),
-            inputImageTexture3: resolveAssetSource(require('./resources/toasterSoftLight.png')),
-            inputImageTexture4: resolveAssetSource(require('./resources/toasterCurves.png')),
-            inputImageTexture5: resolveAssetSource(require('./resources/toasterOverlayMapWarm.png')),
-            inputImageTexture6: resolveAssetSource(require('./resources/toasterColorShift.png'))
-        }} />;
+module.exports = GL.createComponent(
+    ({ children: inputImageTexture }) => {
+        return <GL.Node
+            shader={shaders.Toaster}
+            uniforms={{
+                inputImageTexture,
+                inputImageTexture2: resolveAssetSource(require('./resources/toasterMetal.png')),
+                inputImageTexture3: resolveAssetSource(require('./resources/toasterSoftLight.png')),
+                inputImageTexture4: resolveAssetSource(require('./resources/toasterCurves.png')),
+                inputImageTexture5: resolveAssetSource(require('./resources/toasterOverlayMapWarm.png')),
+                inputImageTexture6: resolveAssetSource(require('./resources/toasterColorShift.png'))
+            }}
+        />
+    },
+    {
+        displayName: "Toaster"
     }
-}
+);

@@ -2,9 +2,11 @@ import React, {Component} from 'react';
 import {Image, TouchableHighlight, StyleSheet, View, Dimensions, Text, PanResponder } from 'react-native';
 import {Amaro, Brannan, Earlybird, F1977, Hefe, Hudson, Inkwell, Lokofi, LordKelvin, Nashville, Normal, Rise, Sierra, Sutro, Toaster, Valencia, XproII, Walden} from "./filters"
 import {Surface} from 'gl-react-native'
-import GLImage from'gl-react-image'
 import SwipeRecognizer from 'react-native-swipe-recognizer';
 import Icon from 'react-native-vector-icons/FontAwesome'
+import GLImage from 'gl-react-image'
+import ViewShot from "react-native-view-shot";
+
 
 
 export default class FilterScreen extends Component{
@@ -97,7 +99,13 @@ export default class FilterScreen extends Component{
     }
 
     use(){
+        this._viewShot.capture().then(uri =>{
+            console.log(uri);
+            this.props.navigation.navigate("FilterScreen", {
+                selectedImage: uri
+            });
 
+        });
     }
 
 
@@ -116,13 +124,20 @@ export default class FilterScreen extends Component{
         };
 
         return (
-            <View style={styles.slide} { ...this._panResponder.panHandlers }>
+            <View style={styles.slide} >
                 <Text>Swipe to select filter</Text>
                 <View style={{height: 50}}/>
-                <Surface style={{width: Dimensions.get('window').width, height: Dimensions.get('window').width}}>
-                    <Filter inputImageTexture={{uri:uri}}>
-                    </Filter>
-                </Surface>
+
+                <View { ...this._panResponder.panHandlers }>
+                    <Surface height={Dimensions.get('window').width} width={Dimensions.get('window').width}>
+                        <Filter>
+                            <Filter>
+                                {uri}
+                            </Filter>
+                        </Filter>
+                    </Surface>
+                </View>
+
                 <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'stretch'}}>
                     <Icon.Button name="check" style={{color: 'white'}} onPress={this.use.bind(this)}> Use </Icon.Button>
                     <View style={{width: 50}}/>
