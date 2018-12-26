@@ -8,9 +8,15 @@ import SplashScreen from './screens/SplashScreen'
 import PickImageScreen from './screens/PickImageScreen'
 import TakePhotoScreen from './screens/TakePhotoScreen'
 import FilterScreen from './screens/FilterScreen'
-
+import SettingsScreen from './screens/SettingsScreen'
 
 const navigationStack = createStackNavigator({
+    // SettingsScreen: {
+    //     screen: SettingsScreen,
+    // },
+    // FilterScreen: {
+    //     screen: FilterScreen,
+    // },
     SplashScreen: {
         screen: SplashScreen,
     },
@@ -22,6 +28,9 @@ const navigationStack = createStackNavigator({
     },
     FilterScreen: {
         screen: FilterScreen,
+    },
+    SettingsScreen: {
+        screen: SettingsScreen,
     }
 }, { headerMode: 'none'});
 

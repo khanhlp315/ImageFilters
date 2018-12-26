@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Image, TouchableHighlight, StyleSheet, View, Text} from 'react-native';
+import {Image, TouchableHighlight, StyleSheet, View, Text, Dimensions} from 'react-native';
 import MediaPicker from './media-picker'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import AutoHeightImage from 'react-native-auto-height-image';
@@ -23,6 +23,9 @@ export default class PickImageScreen extends Component
 
     }
     use(){
+        this.setState({
+            selectedImage: null
+        });
         this.props.navigation.navigate("FilterScreen", {
             selectedImage: this.state.selectedImage
         });
@@ -82,13 +85,13 @@ export default class PickImageScreen extends Component
         else {
             return(
                 <View style={styles.container}>
-                    <AutoHeightImage source={{uri: this.state.selectedImage}} width={300}/>
-                    <TouchableHighlight onPress={this.use.bind(this)}>
-                        <Text style={{color: 'white'}}> Use </Text>
-                    </TouchableHighlight>
-                    <TouchableHighlight onPress={this.cancel.bind(this)}>
-                        <Text style={{color: 'white'}}> Cancel </Text>
-                    </TouchableHighlight>
+                    <AutoHeightImage source={{uri: this.state.selectedImage}} width={Dimensions.get('window').width}/>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'stretch'}}>
+                        <Icon.Button name="check" style={{color: 'white'}} onPress={this.use.bind(this)}> Use </Icon.Button>
+                        <View style={{width: 50}}/>
+                        <Icon.Button name="times" style={{color: 'white'}} onPress={this.cancel.bind(this)}> Back </Icon.Button>
+                    </View>
+
                 </View>
             )
         }
