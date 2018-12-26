@@ -12,8 +12,8 @@ export default class PickImageScreen extends Component{
                         this.camera = ref;
                     }}
                     style = {styles.preview}
-                    type={RNCamera.Constants.Type.back}
-                    flashMode={RNCamera.Constants.FlashMode.auto}
+                    type={RNCamera.Constants.Type.front}
+                    flashMode={RNCamera.Constants.FlashMode.off}
                     permissionDialogTitle={'Permission to use camera'}
                     permissionDialogMessage={'We need your permission to use your camera phone'}
                 />
@@ -33,7 +33,6 @@ export default class PickImageScreen extends Component{
         if (this.camera) {
             const options = { quality: 0.5, base64: true, doNotSave: false };
             await this.camera.takePictureAsync(options).then(data => {
-                console.log(data);
                 CameraRoll.saveToCameraRoll(data.uri);
                 this.props.navigation.goBack();
             });

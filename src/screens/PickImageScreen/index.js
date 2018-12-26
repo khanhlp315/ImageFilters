@@ -41,7 +41,7 @@ export default class PickImageScreen extends Component
         this.didFocusSubscription = this.props.navigation.addListener(
             'didFocus',
             payload => {
-                if(this.mediaPicker._mounted)
+                if(this.mediaPicker != null)
                 {
                     this.mediaPicker.reloadCameraRoll();
                 }
