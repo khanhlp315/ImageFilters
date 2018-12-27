@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Image, TouchableHighlight, StyleSheet, View, Dimensions, Text, PanResponder, CameraRoll, ToastAndroid} from 'react-native';
+import {Image, ScrollView, StyleSheet, View, Dimensions, Text, PanResponder, CameraRoll, ToastAndroid} from 'react-native';
 import {Amaro, Brannan, Earlybird, F1977, Hefe, Hudson, Inkwell, Lokofi, LordKelvin, Nashville, Normal, Rise, Sierra, Sutro, Toaster, Valencia, XproII, Walden} from "./filters"
 import ImageEffects from './image-effects'
 import {Surface} from 'gl-react-native'
@@ -30,7 +30,7 @@ export default class FilterScreen extends Component{
             Walden
         ];
         this._filterNames=[
-            "Normal",
+            "None",
             "Amaro",
             "Brannan",
             "Earlybird",
@@ -108,6 +108,8 @@ export default class FilterScreen extends Component{
     }
 
     use(){
+        ToastAndroid.show("Saving image... please wait", ToastAndroid.SHORT, ToastAndroid.BOTTOM)
+
         this._surface.captureFrame({ type: "png", format: "file", quality: 1, filePath:`${DocumentDirectoryPath}/${new Date().getTime()}.png` }).then(uri => {
             console.log(uri);
             CameraRoll.saveToCameraRoll(uri);
@@ -133,6 +135,11 @@ export default class FilterScreen extends Component{
 
     render(){
         var uri = this.props.navigation.getParam("selectedImage");
+        var width = this.props.navigation.getParam("width");
+        var height = this.props.navigation.getParam("height");
+
+        var ratio = height/width;
+
         var Filter = this._filters[this.state.index];
         const config = {
             velocityThreshold: 0.3,
@@ -142,76 +149,78 @@ export default class FilterScreen extends Component{
 
 
         return (
-            <View style={styles.slide} >
-                <Text>Swipe to select filter</Text>
-                <View { ...this._panResponder.panHandlers }>
-                    <Surface
-                        ref={ref => {
-                            this._surface = ref;
-                        }}
-                        height={Dimensions.get('window').width} width={Dimensions.get('window').width}>
-                        <ImageEffects sepia={this.state.sepia} hue={this.state.hue} blur={this.state.blur}
-                                      sharpen={this.state.sharpen} negative={this.state.negative} contrast={this.state.contrast}
-                                      saturation={this.state.saturation} brightness={this.state.brightness} temperature={this.state.temperature}>
-                            <Filter>
-                                {uri}
-                            </Filter>
-                        </ImageEffects>
-                    </Surface>
-                </View>
+            <ScrollView>
+                <View style={styles.slide} >
+                    <Text>Swipe to select filter</Text>
+                    <View { ...this._panResponder.panHandlers }>
+                        <Surface
+                            ref={ref => {
+                                this._surface = ref;
+                            }}
+                            height={ratio * Dimensions.get('window').width} width={Dimensions.get('window').width}>
+                            <ImageEffects sepia={this.state.sepia} hue={this.state.hue} blur={this.state.blur}
+                                          sharpen={this.state.sharpen} negative={this.state.negative} contrast={this.state.contrast}
+                                          saturation={this.state.saturation} brightness={this.state.brightness} temperature={this.state.temperature}>
+                                <Filter>
+                                    {uri}
+                                </Filter>
+                            </ImageEffects>
+                        </Surface>
+                    </View>
 
-                <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'stretch'}}>
-                    <Icon.Button name="check" style={{color: 'white'}} onPress={this.use.bind(this)}> Save </Icon.Button>
-                    <View style={{width: 50}}/>
-                    <Icon.Button name="times" style={{color: 'white'}} onPress={this.cancel.bind(this)}> Back </Icon.Button>
+                    <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'stretch'}}>
+                        <Icon.Button name="times" style={{color: 'white'}} onPress={this.cancel.bind(this)}> Back </Icon.Button>
+                        <View style={{width: 50}}/>
+                        <Icon.Button name="check" style={{color: 'white'}} onPress={this.use.bind(this)}> Save </Icon.Button>
+                    </View>
+                    <Text style={styles.text}>Selected filter: {this._filterNames[this.state.index]}</Text>
+                    <View style={styles.sliderContainer} style={{width: Dimensions.get('window').width, flexDirection: 'row'}}>
+                        <Text style={styles.sliderText}>Hue</Text>
+                        <Slider style={{width: '100%'}} minimumTrackTintColor='#13a9d6' thumbImage={require('./resources/thumb.png')} thumbStyle={styles.thumb} thumbTintColor='#0c6692'
+                                minimumValue={0} maximumValue={2*Math.PI} step={0.1} value={this.state.hue} onValueChange={value => this.setState({ hue: value })}/>
+                    </View>
+                    <View style={styles.sliderContainer} style={{width: Dimensions.get('window').width, flexDirection: 'row'}}>
+                        <Text style={styles.sliderText}>Blur</Text>
+                        <Slider style={{width: Dimensions.get('window').width}} minimumTrackTintColor='#13a9d6' thumbImage={require('./resources/thumb.png')} thumbStyle={styles.thumb} thumbTintColor='#0c6692'
+                                minimumValue={0} maximumValue={6} step={0.1} value={this.state.blur} onValueChange={value => this.setState({ blur: value })}/>
+                    </View>
+                    <View style={styles.sliderContainer} style={{width: Dimensions.get('window').width, flexDirection: 'row'}}>
+                        <Text style={styles.sliderText}>Sepia</Text>
+                        <Slider style={{width: Dimensions.get('window').width}} minimumTrackTintColor='#13a9d6' thumbImage={require('./resources/thumb.png')} thumbStyle={styles.thumb} thumbTintColor='#0c6692'
+                                minimumValue={0} maximumValue={1} step={0.05} value={this.state.sepia} onValueChange={value => this.setState({ sepia: value })}/>
+                    </View>
+                    <View style={styles.sliderContainer} style={{width: Dimensions.get('window').width, flexDirection: 'row'}}>
+                        <Text style={styles.sliderText}>Sharpen</Text>
+                        <Slider style={{width: Dimensions.get('window').width}} minimumTrackTintColor='#13a9d6' thumbImage={require('./resources/thumb.png')} thumbStyle={styles.thumb} thumbTintColor='#0c6692'
+                                minimumValue={0} maximumValue={1} step={0.05} value={this.state.sharpen} onValueChange={value => this.setState({ sharpen: value })}/>
+                    </View>
+                    <View style={styles.sliderContainer} style={{width: Dimensions.get('window').width, flexDirection: 'row'}}>
+                        <Text style={styles.sliderText}>Negative</Text>
+                        <Slider style={{width: Dimensions.get('window').width}} minimumTrackTintColor='#13a9d6' thumbImage={require('./resources/thumb.png')} thumbStyle={styles.thumb} thumbTintColor='#0c6692'
+                                minimumValue={0} maximumValue={1} step={0.05} value={this.state.negative} onValueChange={value => this.setState({ negative: value })}/>
+                    </View>
+                    <View style={styles.sliderContainer} style={{width: Dimensions.get('window').width, flexDirection: 'row'}}>
+                        <Text style={styles.sliderText}>Contrast</Text>
+                        <Slider style={{width: Dimensions.get('window').width}} minimumTrackTintColor='#13a9d6' thumbImage={require('./resources/thumb.png')} thumbStyle={styles.thumb} thumbTintColor='#0c6692'
+                                minimumValue={0} maximumValue={4} step={0.1} value={this.state.contrast} onValueChange={value => this.setState({ contrast: value })}/>
+                    </View>
+                    <View style={styles.sliderContainer} style={{width: Dimensions.get('window').width, flexDirection: 'row'}}>
+                        <Text style={styles.sliderText}>Saturation</Text>
+                        <Slider style={{width: Dimensions.get('window').width}} minimumTrackTintColor='#13a9d6' thumbImage={require('./resources/thumb.png')} thumbStyle={styles.thumb} thumbTintColor='#0c6692'
+                                minimumValue={0} maximumValue={10} step={0.1} value={this.state.saturation} onValueChange={value => this.setState({ saturation: value })}/>
+                    </View>
+                    <View style={styles.sliderContainer} style={{width: Dimensions.get('window').width, flexDirection: 'row'}}>
+                        <Text style={styles.sliderText}>Brightness</Text>
+                        <Slider style={{width: Dimensions.get('window').width}} minimumTrackTintColor='#13a9d6' thumbImage={require('./resources/thumb.png')} thumbStyle={styles.thumb} thumbTintColor='#0c6692'
+                                minimumValue={0} maximumValue={4} step={0.1} value={this.state.brightness} onValueChange={value => this.setState({ brightness: value })}/>
+                    </View>
+                    <View style={styles.sliderContainer} style={{width: Dimensions.get('window').width, flexDirection: 'row'}}>
+                        <Text style={styles.sliderText}>Temperature</Text>
+                        <Slider style={{width: Dimensions.get('window').width}} minimumTrackTintColor='#13a9d6' thumbImage={require('./resources/thumb.png')} thumbStyle={styles.thumb} thumbTintColor='#0c6692'
+                                minimumValue={2000} maximumValue={12000} step={0.1} value={this.state.temperature} onValueChange={value => this.setState({ temperature: value })}/>
+                    </View>
                 </View>
-                <Text>Selected filter: {this._filterNames[this.state.index]}</Text>
-                <View style={styles.sliderContainer} style={{width: Dimensions.get('window').width, flexDirection: 'row'}}>
-                    <Text style={{alignSelf: 'center'}}>Hue</Text>
-                    <Slider style={{width: '100%'}} minimumTrackTintColor='#13a9d6' thumbImage={require('./resources/thumb.png')} thumbStyle={styles.thumb} thumbTintColor='#0c6692'
-                            minimumValue={0} maximumValue={2*Math.PI} step={0.1} value={this.state.hue} onValueChange={value => this.setState({ hue: value })}/>
-                </View>
-                <View style={styles.sliderContainer} style={{width: Dimensions.get('window').width, flexDirection: 'row'}}>
-                    <Text style={{alignSelf: 'center'}}>Blur</Text>
-                    <Slider style={{width: Dimensions.get('window').width}} minimumTrackTintColor='#13a9d6' thumbImage={require('./resources/thumb.png')} thumbStyle={styles.thumb} thumbTintColor='#0c6692'
-                            minimumValue={0} maximumValue={6} step={0.1} value={this.state.blur} onValueChange={value => this.setState({ blur: value })}/>
-                </View>
-                <View style={styles.sliderContainer} style={{width: Dimensions.get('window').width, flexDirection: 'row'}}>
-                    <Text style={{alignSelf: 'center'}}>Sepia</Text>
-                    <Slider style={{width: Dimensions.get('window').width}} minimumTrackTintColor='#13a9d6' thumbImage={require('./resources/thumb.png')} thumbStyle={styles.thumb} thumbTintColor='#0c6692'
-                            minimumValue={0} maximumValue={1} step={0.05} value={this.state.sepia} onValueChange={value => this.setState({ sepia: value })}/>
-                </View>
-                <View style={styles.sliderContainer} style={{width: Dimensions.get('window').width, flexDirection: 'row'}}>
-                    <Text style={{alignSelf: 'center'}}>Sharpen</Text>
-                    <Slider style={{width: Dimensions.get('window').width}} minimumTrackTintColor='#13a9d6' thumbImage={require('./resources/thumb.png')} thumbStyle={styles.thumb} thumbTintColor='#0c6692'
-                            minimumValue={0} maximumValue={1} step={0.05} value={this.state.sharpen} onValueChange={value => this.setState({ sharpen: value })}/>
-                </View>
-                <View style={styles.sliderContainer} style={{width: Dimensions.get('window').width, flexDirection: 'row'}}>
-                    <Text style={{alignSelf: 'center'}}>Negative</Text>
-                    <Slider style={{width: Dimensions.get('window').width}} minimumTrackTintColor='#13a9d6' thumbImage={require('./resources/thumb.png')} thumbStyle={styles.thumb} thumbTintColor='#0c6692'
-                            minimumValue={0} maximumValue={1} step={0.05} value={this.state.negative} onValueChange={value => this.setState({ negative: value })}/>
-                </View>
-                <View style={styles.sliderContainer} style={{width: Dimensions.get('window').width, flexDirection: 'row'}}>
-                    <Text style={{alignSelf: 'center'}}>Contrast</Text>
-                    <Slider style={{width: Dimensions.get('window').width}} minimumTrackTintColor='#13a9d6' thumbImage={require('./resources/thumb.png')} thumbStyle={styles.thumb} thumbTintColor='#0c6692'
-                            minimumValue={0} maximumValue={4} step={0.1} value={this.state.contrast} onValueChange={value => this.setState({ contrast: value })}/>
-                </View>
-                <View style={styles.sliderContainer} style={{width: Dimensions.get('window').width, flexDirection: 'row'}}>
-                    <Text style={{alignSelf: 'center'}}>Saturation</Text>
-                    <Slider style={{width: Dimensions.get('window').width}} minimumTrackTintColor='#13a9d6' thumbImage={require('./resources/thumb.png')} thumbStyle={styles.thumb} thumbTintColor='#0c6692'
-                            minimumValue={0} maximumValue={10} step={0.1} value={this.state.saturation} onValueChange={value => this.setState({ saturation: value })}/>
-                </View>
-                <View style={styles.sliderContainer} style={{width: Dimensions.get('window').width, flexDirection: 'row'}}>
-                    <Text style={{alignSelf: 'center'}}>Brightness</Text>
-                    <Slider style={{width: Dimensions.get('window').width}} minimumTrackTintColor='#13a9d6' thumbImage={require('./resources/thumb.png')} thumbStyle={styles.thumb} thumbTintColor='#0c6692'
-                            minimumValue={0} maximumValue={4} step={0.1} value={this.state.brightness} onValueChange={value => this.setState({ brightness: value })}/>
-                </View>
-                <View style={styles.sliderContainer} style={{width: Dimensions.get('window').width, flexDirection: 'row'}}>
-                    <Text style={{alignSelf: 'center'}}>Temperature</Text>
-                    <Slider style={{width: Dimensions.get('window').width}} minimumTrackTintColor='#13a9d6' thumbImage={require('./resources/thumb.png')} thumbStyle={styles.thumb} thumbTintColor='#0c6692'
-                            minimumValue={2000} maximumValue={12000} step={0.1} value={this.state.temperature} onValueChange={value => this.setState({ temperature: value })}/>
-                </View>
-            </View>
+            </ScrollView>
         )
     }
 }
@@ -219,9 +228,8 @@ export default class FilterScreen extends Component{
 const styles = StyleSheet.create({
     slide: {
         flex: 1,
-        justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#9DD6EB',
+        backgroundColor: 'black',
     },
     thumb: {
         width: 30,
@@ -233,5 +241,13 @@ const styles = StyleSheet.create({
     },
     sliderContainer:{
         flexDirection: 'row',
+    },
+    sliderText:{
+        alignSelf: 'center',
+        color: 'white'
+    },
+    text:{
+        alignSelf: 'center',
+        color: 'white'
     }
 })

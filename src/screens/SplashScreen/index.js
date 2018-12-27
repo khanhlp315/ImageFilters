@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Image, PermissionsAndroid, View, StyleSheet} from 'react-native';
+import {Image, PermissionsAndroid, View, StyleSheet, Dimensions} from 'react-native';
 
 export default class SplashScreen extends Component
 {
@@ -39,7 +39,7 @@ export default class SplashScreen extends Component
 
             setTimeout(()=>{
                 this.props.navigation.navigate("PickImageScreen");
-            }, 5000);
+            }, 4000);
         } catch (err) {
             await this.requestPermissions();
             console.warn(err);
@@ -53,7 +53,7 @@ export default class SplashScreen extends Component
             payload => {
                 setTimeout(()=>{
                     this.props.navigation.navigate("PickImageScreen");
-                }, 5000);
+                }, 4000);
             }
         );
         await this.requestPermissions();
@@ -71,7 +71,7 @@ export default class SplashScreen extends Component
     render(){
         return (
             <View style={styles.container}>
-                <Image source={require('./resources/logo.png')}/>
+                <Image style={{width: Dimensions.get('window').width, height: Dimensions.get('window').width}} source={require('./resources/logo.gif')}/>
             </View>
         )
     }

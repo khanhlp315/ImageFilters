@@ -6,8 +6,7 @@ import {
     View,
     Button
 } from 'react-native'
-// import ToggleSwitch from 'toggle-switch-react-native'
-import Icon from 'react-native-vector-icons/Ionicons'
+import Icon from "react-native-vector-icons/FontAwesome";
 
 export default class SettingsScreen extends Component {
     constructor(props) {
@@ -17,69 +16,47 @@ export default class SettingsScreen extends Component {
 
     render() {
         return (
-            <View>
-                <View style={styles.textContainer}>
-                    <Text>
-                        ChangeBackgroundColor
-                    </Text>
-                </View>
-                <View style={styles.iconContainer}>
-
-                    <Icon
-                        name='logo-facebook'
-                    />
-                    {/*<SocialIcon*/}
-
-                        {/*type='instagram'*/}
-                    {/*/>*/}
-                    {/*<SocialIcon*/}
-                        {/*type='facebook'*/}
-                    {/*/>*/}
-                </View>
-                <View style={ styles.buttonContainer}>
-                    {/*<ToggleSwitch*/}
-                        {/*isOn={false}*/}
-                        {/*onColor='green'*/}
-                        {/*offColor='black'*/}
-                        {/*label='Dark'*/}
-
-                        {/*labelStyle={{color: 'black'}}*/}
-                        {/*size='medium'*/}
-                        {/*onToggle={ (isOn) => console.log('changed to : ', isOn,) }*/}
-                    {/*/>*/}
-                </View>
-                <View style={styles.button}>
-                    <TouchableHighlight
-                        onPress={this.onPress}
-                    >
-                        <Text> LEARN MORE </Text>
-                    </TouchableHighlight>
-                    <TouchableHighlight
-                        onPress={this.onPress}
-                    >
-                        <Text > CONTACT US </Text>
-                    </TouchableHighlight>
-                </View>
+            <View style={styles.container}>
+                <Text style={styles.welcome}>
+                    Welcome to RainbowFilters
+                </Text>
+                <Text style={styles.instructions}>
+                    To get started, select a picture to edit
+                </Text>
+                <Text style={styles.instructions}>
+                    Swipe the picture to select filter and adjust the parameters
+                </Text>
+                <Text style={styles.instructions}>
+                    Tap the Save button to save after adjusting
+                </Text>
+                <Icon.Button name="arrow-left" style={{color: 'white'}} onPress={this.back.bind(this)}> Back </Icon.Button>
             </View>
-
         );
+    }
+
+    back(){
+        this.props.navigation.goBack();
     }
 }
 
 const styles = StyleSheet.create({
-    textContainer: {
+    container: {
         flex: 1,
         flexDirection:'column',
-        position: 'absolute',
-        top:200
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'black'
     },
-    iconContainer:{
-        flex:1,
-        flexDirection:'row',
-        position:'absolute',
-        top:250,
-        left : 80,
-        justifyContent:'space-between'
+    welcome:{
+        fontSize: 20,
+        textAlign: 'center',
+        margin: 10,
+        color: 'white'
+    },
+    instructions:{
+        textAlign: 'center',
+        color: 'white',
+        marginBottom: 5
     },
     buttonContainer:{
         flex:1,

@@ -4,26 +4,47 @@ import {RNCamera} from 'react-native-camera'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
 export default class PickImageScreen extends Component{
+    constructor(props) {
+        super(props);
+        this.state={
+            camera: 'front'
+        }
+    }
+
+
     render() {
         return (
             <View style={styles.container}>
+                <View style={{flex: 0, flexDirection: 'row', justifyContent: 'center',}}>
+                    <Icon.Button name="retweet" onPress={()=>{
+                        if(this.state.camera === 'front'){
+                            this.setState({
+                                camera: 'back'
+                            })
+                        }
+                        else if(this.state.camera === 'back'){
+                            this.setState({
+                                camera: 'front'
+                            })
+                        }
+                    }}>
+                        Change camera
+                    </Icon.Button>
+                </View>
                 <RNCamera
                     ref={ref => {
                         this.camera = ref;
                     }}
                     style = {styles.preview}
-                    type={RNCamera.Constants.Type.front}
+                    type={this.state.camera === 'back'?RNCamera.Constants.Type.back: RNCamera.Constants.Type.front}
                     flashMode={RNCamera.Constants.FlashMode.off}
                     permissionDialogTitle={'Permission to use camera'}
                     permissionDialogMessage={'We need your permission to use your camera phone'}
                 />
                 <View style={{flex: 0, flexDirection: 'row', justifyContent: 'center',}}>
-                    <TouchableOpacity
-                        onPress={this.takePicture.bind(this)}
-                        style = {styles.capture}
-                    >
-                        <Text style={{fontSize: 14}}> SNAP </Text>
-                    </TouchableOpacity>
+                    <Icon.Button name="camera" onPress={this.takePicture.bind(this)}>
+                        Take a photo
+                    </Icon.Button>
                 </View>
             </View>
         );
